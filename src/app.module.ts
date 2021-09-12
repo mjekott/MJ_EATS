@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
@@ -7,6 +12,7 @@ import { UsersModule } from './users/users.module';
 import * as Joi from 'joi';
 import { User } from './users/entities/user.entities';
 import { JwtModule } from './jwt/jwt.module';
+import { JwtMiddleware } from './jwt/jwt.middlewares';
 
 @Module({
   imports: [
@@ -27,6 +33,7 @@ import { JwtModule } from './jwt/jwt.module';
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      context: ({ req }) => ({ user: req['user'] }),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -45,4 +52,11 @@ import { JwtModule } from './jwt/jwt.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JwtMiddleware).forRoutes({
+      path: '*',
+      method: RequestMethod.ALL,
+    });
+  }
+}

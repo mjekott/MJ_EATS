@@ -1,4 +1,7 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { AuthUser } from 'src/auth/auth-user.decorators';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { JwtService } from 'src/jwt/jwt.services';
 import {
   CreateAccountInput,
@@ -15,9 +18,10 @@ export class UsersResolver {
     private readonly jwtService: JwtService,
   ) {}
 
-  @Query(() => Boolean)
-  hi() {
-    return true;
+  @Query(() => User)
+  @UseGuards(AuthGuard)
+  me(@AuthUser() authUser: User) {
+    return authUser;
   }
 
   @Mutation(() => CreateAccountOutput)

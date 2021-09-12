@@ -14,6 +14,10 @@ export class JwtService {
       expiresIn: '7d',
     });
   }
+
+  verify(token: string) {
+    return jwt.verify(token, this.options.privateKey);
+  }
 }
 
 // @inject(CONFIG_OPTIONS) private readonly configServoce:ConfigService

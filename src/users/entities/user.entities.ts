@@ -10,9 +10,9 @@ import { IsEmail, IsEnum, IsString, Length, min } from 'class-validator';
 import { Core } from 'src/common/entities/core.entities';
 import { BeforeInsert, Column, Entity } from 'typeorm';
 export enum UserRole {
-  CLIENT = 'client',
-  OWNER = 'owner',
-  DELIVERY = 'devliery',
+  CLIENT,
+  OWNER,
+  DELIVERY,
 }
 
 registerEnumType(UserRole, { name: 'UserRole' });
