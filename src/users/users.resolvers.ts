@@ -1,4 +1,5 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { JwtService } from 'src/jwt/jwt.services';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -9,7 +10,10 @@ import { UsersService } from './users.service';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Query(() => Boolean)
   hi() {

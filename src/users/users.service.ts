@@ -8,11 +8,13 @@ import {
 } from './dtos/create-account.dtos';
 import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entities';
+import { JwtService } from 'src/jwt/jwt.services';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   /**
@@ -61,8 +63,9 @@ export class UsersService {
       if (!isMatch) {
         throw new Error('Invalid Credentials');
       }
-      const token = 'fkffksgksfksk';
       // generate token
+      const token = this.jwtService.sign(user.id);
+
       return {
         ok: true,
         token,
