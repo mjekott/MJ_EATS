@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import {
   CreateAccountInput,
   CreateAccountOutput,
 } from './dtos/create-account.dtos';
+import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entities';
 
 @Injectable()
@@ -14,8 +16,8 @@ export class UsersService {
   ) {}
 
   /**
-   *@description creates a user given some required values
-   * @body email,password,role
+   *@description creates a user given the required fields
+   * @Args email,password,role
    * @returns Promise<CreateAccountOutput>
    */
   async createAccount({
@@ -34,6 +36,37 @@ export class UsersService {
       //create user && hash the password
 
       return { ok: true };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  /***
+   * @description login a user given the required fields
+   * @Args email,password
+   * @returns Promise<LoginOutput>
+   */
+  async login({ email, password }: LoginInput) {
+    try {
+      //check is user exist
+      const user = await this.users.findOne({ where: { email } });
+      if (!user) {
+        throw new Error('Invalid Credentials');
+      }
+      //check if password match
+      const isMatch = await user.checkPassword(password);
+      if (!isMatch) {
+        throw new Error('Invalid Credentials');
+      }
+      const token = 'fkffksgksfksk';
+      // generate token
+      return {
+        ok: true,
+        token,
+      };
     } catch (error) {
       return {
         ok: false,
