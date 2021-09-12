@@ -1,5 +1,6 @@
 # MJ EATS
-Backedn MJ Eats 
+
+Backedn MJ Eats
 
 ## Installation
 
@@ -33,5 +34,22 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Entities
 
+### User Model:
 
+- id
+- createdAt
+- updatedAt
+
+- email
+- password
+- role(client|owner|delivery)
+
+### User Crud
+
+- CreateAccount
+- Login
+- See Profile
+- Edit Profile
+- Verify Email
