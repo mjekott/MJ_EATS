@@ -7,7 +7,7 @@ import {
 
 @ObjectType()
 export class Core {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   @Field(() => Number)
   id: number;
 

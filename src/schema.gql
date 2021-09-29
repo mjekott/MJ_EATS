@@ -9,6 +9,7 @@ type User {
   email: String!
   password: String!
   role: UserRole!
+  verified: Boolean!
 }
 
 """
@@ -20,6 +21,11 @@ enum UserRole {
   CLIENT
   OWNER
   DELIVERY
+}
+
+type EditProfileOutput {
+  ok: Boolean!
+  error: String
 }
 
 type CreateAccountOutput {
@@ -34,13 +40,37 @@ type LoginOutput {
   token: String
 }
 
+type UserProfileOutput {
+  ok: Boolean!
+  error: String
+  user: User
+}
+
+type VerifyEmailOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   me: User!
+  profile(userid: Float!): UserProfileOutput!
 }
 
 type Mutation {
+  editProfile(input: EditProfileInput!): EditProfileOutput!
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
+  verify(input: VerifyEmailInput!): VerifyEmailOutput!
+}
+
+input EditProfileInput {
+  id: Float
+  createdAt: DateTime
+  updatedAt: DateTime
+  email: String
+  password: String
+  role: UserRole
+  verified: Boolean
 }
 
 input CreateAccountInput {
@@ -52,4 +82,8 @@ input CreateAccountInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input VerifyEmailInput {
+  code: String!
 }

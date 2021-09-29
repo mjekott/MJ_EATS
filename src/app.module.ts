@@ -13,6 +13,7 @@ import * as Joi from 'joi';
 import { User } from './users/entities/user.entities';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middlewares';
+import { Verification } from './users/entities/verification.entity';
 
 @Module({
   imports: [
@@ -44,7 +45,7 @@ import { JwtMiddleware } from './jwt/jwt.middlewares';
       database: process.env.DB_DATABASE,
       logging: true,
       synchronize: true,
-      entities: [User],
+      entities: [User, Verification],
     }),
     UsersModule,
     JwtModule.forRoot({ privateKey: process.env.JWT_SECRET }),

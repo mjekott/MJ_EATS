@@ -8,7 +8,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { IsEmail, IsEnum, IsString, Length, min } from 'class-validator';
 import { Core } from 'src/common/entities/core.entities';
-import { BeforeInsert, Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 export enum UserRole {
   CLIENT,
   OWNER,
@@ -26,7 +26,7 @@ export class User extends Core {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @Field(() => String)
   @IsString()
   @Length(5)
@@ -37,13 +37,20 @@ export class User extends Core {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @Column({ default: false })
+  @Field(() => Boolean)
+  verified: boolean;
+
   @BeforeInsert()
+  @BeforeUpdate()
   async hash(): Promise<void> {
-    try {
-      this.password = await bcrypt.hash(this.password, 10);
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException();
+    if (this.password) {
+      try {
+        this.password = await bcrypt.hash(this.password, 10);
+      } catch (error) {
+        console.log(error);
+        throw new InternalServerErrorException();
+      }
     }
   }
 
