@@ -31,6 +31,9 @@ import { MailModule } from './mail/mail.module';
         DB_PASSWORD: Joi.string().required(),
         DB_DATABASE: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
+        MAILGUN_API_KEY: Joi.string().required(),
+        MAILGUN_FROM_EMAIL: Joi.string().required(),
+        MAILGUN_DOMAIN_NAME: Joi.string().required(),
       }),
     }),
     GraphQLModule.forRoot({
@@ -50,7 +53,11 @@ import { MailModule } from './mail/mail.module';
     }),
     UsersModule,
     JwtModule.forRoot({ privateKey: process.env.JWT_SECRET }),
-    MailModule,
+    MailModule.forRoot({
+      apiKey: process.env.MAILGUN_API_KEY,
+      fromEmail: process.env.MAILGUN_FROM_EMAIL,
+      domain: process.env.MAILGUN_DOMAIN_NAME,
+    }),
   ],
   controllers: [],
   providers: [],

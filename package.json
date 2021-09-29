@@ -36,6 +36,7 @@
     "graphql": "^15.5.3",
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
+    "mailgun-js": "^0.22.0",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

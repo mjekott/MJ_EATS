@@ -42,6 +42,7 @@ export class UsersResolver {
     @AuthUser() authUser: User,
     @Args('input') editProfileInput: EditProfileInput,
   ): Promise<EditProfileOutput> {
+    console.log(authUser);
     return this.usersService.editProfile(authUser.id, editProfileInput);
   }
 
