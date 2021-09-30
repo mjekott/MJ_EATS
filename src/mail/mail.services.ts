@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CONFIG_OPTIONS } from '../common/constant';
 import { EmailVar, MailModuleOptions } from './mail.interfaces';
+import { mapData } from './mail.helper';
 import * as mailgun from 'mailgun-js';
 
 @Injectable()
@@ -9,21 +10,19 @@ export class MailService {
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
   ) {}
 
-  private async sendMail(
+  async sendMail(
     subject: string,
     to: string,
     template: string,
 
     emailVars: EmailVar[],
-  ) {
+  ): Promise<any> {
     const mg = mailgun({
       apiKey: this.options.apiKey,
       domain: this.options.domain,
     });
     const emailData = {};
-    emailVars.forEach((variable) => {
-      emailData[variable.key] = variable.value;
-    });
+    mapData(emailData, emailVars);
     const data = {
       from: 'Excited User <me@samples.mailgun.org>',
       to: to,
@@ -32,9 +31,7 @@ export class MailService {
       template: template,
       'h:X-Mailgun-Variables': JSON.stringify(emailData),
     };
-    mg.messages().send(data, function (error, body) {
-      console.log(body);
-    });
+    return mg.messages().send(data, function (error, body) {});
   }
 
   sendVerificationEmail(email: string, code: string) {

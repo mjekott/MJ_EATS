@@ -13,7 +13,7 @@ import { UserProfileOutput } from './dtos/user-profile.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entities';
 import { VerifyEmailOutput } from './dtos/verify-email.dto';
-import { MailService } from '../mail/main.services';
+import { MailService } from '../mail/mail.services';
 
 @Injectable()
 export class UsersService {

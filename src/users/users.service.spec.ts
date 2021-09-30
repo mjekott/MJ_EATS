@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '../jwt/jwt.service';
-import { MailService } from '../mail/main.services';
+import { MailService } from '../mail/mail.services';
 import { User } from './entities/user.entities';
 import { Verification } from './entities/verification.entities';
 import { UsersService } from './users.service';
