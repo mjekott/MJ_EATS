@@ -2,8 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { getConnection } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import * as mailgun from 'mailgun-js';
+import { User } from '../src/users/entities/user.entities';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 const GRAPHQL_ENDPOINT = '/graphql';
 
@@ -30,6 +32,7 @@ jest.mock('mailgun-js', () => {
 describe('UserModule (e2e)', () => {
   let app: INestApplication;
   let token: string;
+  let userRepository: Repository<User>;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,6 +40,7 @@ describe('UserModule (e2e)', () => {
     }).compile();
 
     app = module.createNestApplication();
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     await app.init();
   });
 
@@ -158,6 +162,79 @@ describe('UserModule (e2e)', () => {
           expect(login.ok).toBe(false);
           expect(login.error).toBe('Invalid Credentials');
           expect(login.token).toBe(null);
+        });
+    });
+  });
+
+  describe('profile', () => {
+    let userId: number;
+    beforeAll(async () => {
+      const [user] = await userRepository.find();
+      userId = user.id;
+    });
+    it('should see a users profile', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('Authorization', token)
+        .send({
+          query: `
+        query{
+          profile(userid:${userId}){
+            ok
+            user{
+              id
+            
+            }
+            error
+          }
+          }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                profile: {
+                  ok,
+                  error,
+                  user: { id },
+                },
+              },
+            },
+          } = res;
+          expect(ok).toBe(true);
+          expect(id).toBe(userId);
+          expect(error).toBe(null);
+        });
+    });
+    it('should not find a profile', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('Authorization', token)
+        .send({
+          query: `
+      query{
+        profile(userid:66){
+          ok
+          user{
+            id
+          }
+          error
+        }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                profile: { ok, error, user },
+              },
+            },
+          } = res;
+          expect(ok).toBe(false);
+          expect(user).toBe(null);
+          expect(error).toBe('User Not Found');
         });
     });
   });
