@@ -3,7 +3,7 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { retry } from 'rxjs';
 import { AuthUser } from 'src/auth/auth-user.decorators';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { JwtService } from 'src/jwt/jwt.services';
+import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import {
   CreateAccountInput,

@@ -13,8 +13,8 @@ import * as Joi from 'joi';
 import { User } from './users/entities/user.entities';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middlewares';
-import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
+import { Verification } from './users/entities/verification.entities';
 
 @Module({
   imports: [

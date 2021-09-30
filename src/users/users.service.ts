@@ -8,10 +8,10 @@ import {
 } from './dtos/create-account.dtos';
 import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entities';
-import { JwtService } from 'src/jwt/jwt.services';
+import { JwtService } from 'src/jwt/jwt.service';
 import { UserProfileOutput } from './dtos/user-profile.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
-import { Verification } from './entities/verification.entity';
+import { Verification } from './entities/verification.entities';
 import { VerifyEmailOutput } from './dtos/verify-email.dto';
 import { MailService } from '../mail/main.services';
 
@@ -39,8 +39,7 @@ export class UsersService {
       // check new user
       const exists = await this.users.findOne({ where: { email } });
       if (exists) {
-        throw new Error('Email is already taken');
-        return;
+        return { ok: false, error: 'There is a user with that email already' };
       }
       //create user && hash the password
       const user = await this.users.save(
@@ -57,7 +56,7 @@ export class UsersService {
     } catch (error) {
       return {
         ok: false,
-        error,
+        error: "Coudn't create account",
       };
     }
   }
@@ -75,12 +74,12 @@ export class UsersService {
         { select: ['id', 'password'] },
       );
       if (!user) {
-        throw new Error('Invalid Credentials');
+        throw new Error();
       }
       //check if password match
       const isMatch = await user.checkPassword(password);
       if (!isMatch) {
-        throw new Error('Invalid Credentials');
+        throw new Error();
       }
       // generate token
       const token = this.jwtService.sign(user.id);
@@ -92,20 +91,18 @@ export class UsersService {
     } catch (error) {
       return {
         ok: false,
-        error,
+        error: 'Invalid Credentials',
       };
     }
   }
 
   async findById(id: number): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOne({ id });
-      if (user) {
-        return {
-          ok: true,
-          user,
-        };
-      }
+      const user = await this.users.findOneOrFail({ id });
+      return {
+        ok: true,
+        user,
+      };
     } catch (error) {
       return {
         ok: false,
@@ -132,7 +129,7 @@ export class UsersService {
       if (password) {
         user.password = password;
       }
-      console.log(user);
+
       await this.users.save(user);
       return {
         ok: true,
@@ -140,7 +137,7 @@ export class UsersService {
     } catch (error) {
       return {
         ok: false,
-        error,
+        error: 'Could not update profile.',
       };
     }
   }
@@ -154,14 +151,19 @@ export class UsersService {
       if (verification) {
         verification.user.verified = true;
         this.users.save(verification.user);
+        await this.verification.delete(verification.id);
+        return {
+          ok: true,
+        };
       }
       return {
-        ok: true,
+        ok: false,
+        error: 'Verification not found.',
       };
     } catch (error) {
       return {
         ok: false,
-        error,
+        error: 'Could not verify email.',
       };
     }
   }
