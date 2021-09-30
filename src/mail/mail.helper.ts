@@ -4,3 +4,5 @@ export const mapData = (emailData: Object, emailVar: any[]) => {
     emailData[variable.key] = variable.value;
   });
 };
+
+export const sendCallback = (error: any, body: any) => {};

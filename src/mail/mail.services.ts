@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CONFIG_OPTIONS } from '../common/constant';
 import { EmailVar, MailModuleOptions } from './mail.interfaces';
-import { mapData } from './mail.helper';
+import { mapData, sendCallback } from './mail.helper';
 import * as mailgun from 'mailgun-js';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class MailService {
       template: template,
       'h:X-Mailgun-Variables': JSON.stringify(emailData),
     };
-    return mg.messages().send(data, function (error, body) {});
+    return mg.messages().send(data, sendCallback);
   }
 
   sendVerificationEmail(email: string, code: string) {
