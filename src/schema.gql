@@ -51,9 +51,30 @@ type VerifyEmailOutput {
   error: String
 }
 
+type Category {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  coverImage: String!
+  restaurants: [Restaurant!]!
+}
+
+type Restaurant {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  address: String!
+  coverImage: String!
+  category: Category!
+}
+
 type Query {
   me: User!
   profile(userid: Float!): UserProfileOutput!
+  restaurants: [Restaurant!]!
+  restaurant(id: Int!): Restaurant!
 }
 
 type Mutation {
@@ -61,6 +82,9 @@ type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
   verifyEmail(input: VerifyEmailInput!): VerifyEmailOutput!
+  createRestaurant(createRestaurantInput: CreateRestaurantInput!): Restaurant!
+  updateRestaurant(updateRestaurantInput: UpdateRestaurantInput!): Restaurant!
+  removeRestaurant(id: Int!): Restaurant!
 }
 
 input EditProfileInput {
@@ -86,4 +110,15 @@ input LoginInput {
 
 input VerifyEmailInput {
   code: String!
+}
+
+input CreateRestaurantInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateRestaurantInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }

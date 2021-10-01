@@ -15,6 +15,9 @@ import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middlewares';
 import { MailModule } from './mail/mail.module';
 import { Verification } from './users/entities/verification.entities';
+import { RestaurantsModule } from './restaurants/restaurants.module';
+import { Category } from './restaurants/entities/category.entity';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
 
 @Module({
   imports: [
@@ -50,7 +53,7 @@ import { Verification } from './users/entities/verification.entities';
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       synchronize: true,
-      entities: [User, Verification],
+      entities: [User, Verification, Category, Restaurant],
     }),
     UsersModule,
     JwtModule.forRoot({ privateKey: process.env.JWT_SECRET }),
@@ -59,6 +62,7 @@ import { Verification } from './users/entities/verification.entities';
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
       domain: process.env.MAILGUN_DOMAIN_NAME,
     }),
+    RestaurantsModule,
   ],
   controllers: [],
   providers: [],

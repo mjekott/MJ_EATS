@@ -6,7 +6,14 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import * as bcrypt from 'bcrypt';
-import { IsEmail, IsEnum, IsString, Length, min } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsEnum,
+  IsString,
+  Length,
+  min,
+} from 'class-validator';
 import { Core } from 'src/common/entities/core.entities';
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 export enum UserRole {
@@ -39,6 +46,7 @@ export class User extends Core {
 
   @Column({ default: false })
   @Field(() => Boolean)
+  @IsBoolean()
   verified: boolean;
 
   @BeforeInsert()

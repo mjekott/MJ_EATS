@@ -53,3 +53,14 @@ $ npm run test:cov
 - See Profile
 - Edit Profile
 - Verify Email
+
+### Restaurant Model:
+
+- id
+- createdAt
+- updatedAt
+
+- name
+- category
+- address
+- coverImage
