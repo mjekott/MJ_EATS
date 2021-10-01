@@ -10,6 +10,7 @@ type Category {
   coverImage: String
   slug: String!
   restaurants: [Restaurant!]!
+  restaurantCount: Float!
 }
 
 """
@@ -83,11 +84,51 @@ type UpdateRestaurantOutput {
   error: String
 }
 
+type DeleteRestaurantOuput {
+  ok: Boolean!
+  error: String
+}
+
+type CatgeoryOutput {
+  ok: Boolean!
+  error: String
+  totalPages: Float
+  restaurants: [Restaurant!]
+  category: Category
+}
+
+type AllCategoriesOutput {
+  ok: Boolean!
+  error: String
+  categories: [Category!]
+}
+
+type RestaurantOutput {
+  ok: Boolean!
+  error: String
+  totalPages: Float
+  results: [Restaurant!]
+}
+
 type Query {
   me: User!
   profile(userid: Float!): UserProfileOutput!
   restaurants: [Restaurant!]!
   restaurant(id: Int!): Restaurant!
+  allrestaurant(restaurantInput: RestaurantInput!): RestaurantOutput!
+  allCategories: AllCategoriesOutput!
+  category(categoryInput: CategoryInput!): CatgeoryOutput!
+}
+
+input RestaurantInput {
+  page: Float = 1
+  limit: Float = 25
+}
+
+input CategoryInput {
+  page: Float = 1
+  limit: Float = 25
+  slug: String!
 }
 
 type Mutation {
@@ -97,7 +138,7 @@ type Mutation {
   verifyEmail(input: VerifyEmailInput!): VerifyEmailOutput!
   createRestaurant(createRestaurantInput: CreateRestaurantInput!): CreateRestaurantOutput!
   updateRestaurant(updateRestaurantInput: UpdateRestaurantInput!): UpdateRestaurantOutput!
-  removeRestaurant(id: Int!): Restaurant!
+  deleteRestaurant(deleteRestaurantInput: DeleteRestaurantInput!): DeleteRestaurantOuput!
 }
 
 input EditProfileInput {
@@ -162,4 +203,8 @@ input UpdateRestaurantInput {
   coverImage: String
   categoryName: String
   restaurantId: Float!
+}
+
+input DeleteRestaurantInput {
+  restaurantid: Float!
 }

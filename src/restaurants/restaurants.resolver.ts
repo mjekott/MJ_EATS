@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { RestaurantsService } from './restaurants.service';
 import { Restaurant } from './entities/restaurant.entity';
 import {
@@ -12,6 +20,18 @@ import {
 import { AuthUser } from '../auth/auth-user.decorator';
 import { User } from '../users/entities/user.entities';
 import { Role } from '../auth/role.decorator';
+import {
+  DeleteRestaurantInput,
+  DeleteRestaurantOuput,
+} from './dto/delete-restaurant.input';
+import { Category } from './entities/category.entity';
+import {
+  AllCategoriesOutput,
+  CategoryInput,
+  CatgeoryOutput,
+} from './dto/category.inputs';
+import { query } from 'express';
+import { RestaurantInput, RestaurantOutput } from './dto/restaurant.inputs';
 
 @Resolver(() => Restaurant)
 export class RestaurantsResolver {
@@ -45,8 +65,40 @@ export class RestaurantsResolver {
     return this.restaurantsService.update(owner, updateRestaurantInput);
   }
 
-  @Mutation(() => Restaurant)
-  removeRestaurant(@Args('id', { type: () => Int }) id: number) {
-    return this.restaurantsService.remove(id);
+  @Mutation(() => DeleteRestaurantOuput)
+  deleteRestaurant(
+    @AuthUser() owner: User,
+    @Args('deleteRestaurantInput') deleteRestaurantInput: DeleteRestaurantInput,
+  ): Promise<DeleteRestaurantOuput> {
+    return this.restaurantsService.delete(owner, deleteRestaurantInput);
+  }
+
+  @Query(() => RestaurantOutput)
+  async allrestaurant(
+    @Args('restaurantInput') restaurantInput: RestaurantInput,
+  ): Promise<RestaurantOutput> {
+    return this.restaurantsService.allRestaurants(restaurantInput);
+  }
+}
+
+@Resolver(() => Category)
+export class CategoryResolver {
+  constructor(private readonly restaurantService: RestaurantsService) {}
+
+  @ResolveField(() => Number)
+  async restaurantCount(@Parent() category: Category): Promise<number> {
+    return this.restaurantService.countRestaurants(category);
+  }
+
+  @Query(() => AllCategoriesOutput)
+  async allCategories(): Promise<AllCategoriesOutput> {
+    return this.restaurantService.allCategories();
+  }
+
+  @Query(() => CatgeoryOutput)
+  async category(
+    @Args('categoryInput') categoryInput: CategoryInput,
+  ): Promise<CatgeoryOutput> {
+    return this.restaurantService.findCategoryBySlug(categoryInput);
   }
 }
