@@ -107,7 +107,7 @@ describe('UserModule (e2e)', () => {
   });
 
   describe('login', () => {
-    it('should login with correct credentias', () => {
+    it('should login with correct credentials', () => {
       return request(app.getHttpServer())
         .post(GRAPHQL_ENDPOINT)
         .send({
@@ -287,6 +287,61 @@ describe('UserModule (e2e)', () => {
           } = res;
           const [error] = errors;
           expect(error.message).toBe('Forbidden resource');
+        });
+    });
+  });
+
+  describe('editProfile', () => {
+    const NEW_EMAIL = 'mail@mail.com';
+    it('should update users email', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('Authorization', token)
+        .send({
+          query: `mutation{
+          editProfile(input:{email:"${NEW_EMAIL}"}){
+            ok
+            error
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                editProfile: { ok, error },
+              },
+            },
+          } = res;
+          expect(ok).toBe(true);
+          expect(error).toBe(null);
+        });
+    });
+    it('should have new email', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('Authorization', token)
+        .send({
+          query: `
+      query{
+        me{
+          email
+          id
+        }
+      }
+      `,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                me: { email },
+              },
+            },
+          } = res;
+          expect(email).toBe(NEW_EMAIL);
         });
     });
   });

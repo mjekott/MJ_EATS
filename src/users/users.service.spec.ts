@@ -203,7 +203,9 @@ describe('UserService', () => {
         email: editProfileArgs.input.email,
       };
 
-      usersRepository.findOne.mockResolvedValue(oldUser);
+      usersRepository.findOne.mockResolvedValueOnce(oldUser);
+      usersRepository.findOne.mockResolvedValueOnce(null);
+
       verificationsRepository.create.mockReturnValue(newVerification);
       verificationsRepository.save.mockResolvedValue(newVerification);
 
@@ -211,7 +213,7 @@ describe('UserService', () => {
       expect(usersRepository.findOne).toHaveBeenCalledWith(
         editProfileArgs.userId,
       );
-      expect(usersRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(usersRepository.findOne).toHaveBeenCalledTimes(2);
 
       expect(verificationsRepository.create).toHaveBeenCalledWith({
         user: newUser,
@@ -224,6 +226,35 @@ describe('UserService', () => {
         newUser.email,
         newVerification.code,
       );
+    });
+    it('should not change email', async () => {
+      const oldUser = {
+        email: 'bs@old.com',
+        verified: true,
+      };
+      const editProfileArgs = {
+        userId: 1,
+        input: { email: 'bs@old.com' },
+      };
+      const newVerification = {
+        code: 'code',
+      };
+
+      usersRepository.findOne.mockResolvedValue(oldUser);
+      verificationsRepository.create.mockReturnValue(newVerification);
+      verificationsRepository.save.mockResolvedValue(newVerification);
+
+      const response = await service.editProfile(
+        editProfileArgs.userId,
+        editProfileArgs.input,
+      );
+      expect(usersRepository.findOne).toHaveBeenCalledWith(
+        editProfileArgs.userId,
+      );
+      expect(usersRepository.findOne).toHaveBeenCalledTimes(2);
+      expect(usersRepository.create).toBeCalledTimes(0);
+      expect(response.error).toBe('Email already taken');
+      expect(response.ok).toBe(false);
     });
     it('should change password', async () => {
       const editProfileArgs = {
