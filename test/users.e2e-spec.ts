@@ -6,6 +6,7 @@ import { getConnection, Repository } from 'typeorm';
 import * as mailgun from 'mailgun-js';
 import { User } from '../src/users/entities/user.entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { Verification } from '../src/users/entities/verification.entities';
 
 const GRAPHQL_ENDPOINT = '/graphql';
 
@@ -33,6 +34,7 @@ describe('UserModule (e2e)', () => {
   let app: INestApplication;
   let token: string;
   let userRepository: Repository<User>;
+  let verificationRepository: Repository<Verification>;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -41,6 +43,9 @@ describe('UserModule (e2e)', () => {
 
     app = module.createNestApplication();
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    verificationRepository = module.get<Repository<Verification>>(
+      getRepositoryToken(Verification),
+    );
     await app.init();
   });
 
@@ -71,6 +76,7 @@ describe('UserModule (e2e)', () => {
         })
         .expect(200)
         .expect((res) => {
+          console.log(res.body);
           expect(res.body.data.createAccount.ok).toBe(true);
           expect(res.body.data.createAccount.error).toBe(null);
         });
@@ -342,6 +348,87 @@ describe('UserModule (e2e)', () => {
             },
           } = res;
           expect(email).toBe(NEW_EMAIL);
+        });
+    });
+    it('should change user password', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('Authorization', token)
+        .send({
+          query: `mutation{
+        editProfile(input:{password:"newPassoword"}){
+          ok
+          error
+        }
+      }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                editProfile: { ok, error },
+              },
+            },
+          } = res;
+          expect(ok).toBe(true);
+          expect(error).toBe(null);
+        });
+    });
+  });
+  describe('verify Email', () => {
+    let verificationCode: string;
+    beforeAll(async () => {
+      const [verification] = await verificationRepository.find();
+      verificationCode = verification.code;
+    });
+    it('should verify email', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `mutation {
+          verifyEmail(input:{code:"${verificationCode}"}){
+            ok
+            error
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                verifyEmail: { ok, error },
+              },
+            },
+          } = res;
+          expect(ok).toBe(true);
+          expect(error).toBe(null);
+        });
+    });
+
+    it('should fail on wrong verifcation code', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `mutation{
+        verifyEmail(input:{code:"sfjfjffj"}){
+          ok
+          error
+        }
+      }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                verifyEmail: { ok, error },
+              },
+            },
+          } = res;
+          expect(ok).toBe(false);
+          expect(error).toBe('Verification code not found.');
         });
     });
   });

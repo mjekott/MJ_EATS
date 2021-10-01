@@ -18,6 +18,9 @@ export class Verification extends Core {
   @Field(() => String)
   code: string;
 
+  @Column()
+  userId: number;
+
   @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;

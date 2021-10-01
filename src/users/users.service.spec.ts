@@ -307,7 +307,10 @@ describe('UserService', () => {
     it('should fail on verification not found', async () => {
       verificationsRepository.findOne.mockResolvedValue(undefined);
       const result = await service.verifyEmail('');
-      expect(result).toEqual({ ok: false, error: 'Verification not found.' });
+      expect(result).toEqual({
+        ok: false,
+        error: 'Verification code not found.',
+      });
     });
 
     it('should fail on exception', async () => {

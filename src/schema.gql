@@ -60,7 +60,7 @@ type Mutation {
   editProfile(input: EditProfileInput!): EditProfileOutput!
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
-  verify(input: VerifyEmailInput!): VerifyEmailOutput!
+  verifyEmail(input: VerifyEmailInput!): VerifyEmailOutput!
 }
 
 input EditProfileInput {
