@@ -5,7 +5,10 @@ import {
   CreateRestaurantInput,
   CreateRestaurantOutput,
 } from './dto/create-restaurant.input';
-import { UpdateRestaurantInput } from './dto/update-restaurant.input';
+import {
+  UpdateRestaurantInput,
+  UpdateRestaurantOutput,
+} from './dto/update-restaurant.input';
 import { AuthUser } from '../auth/auth-user.decorator';
 import { User } from '../users/entities/user.entities';
 import { Role } from '../auth/role.decorator';
@@ -34,12 +37,12 @@ export class RestaurantsResolver {
   }
 
   @Role(['OWNER'])
-  @Mutation(() => Restaurant)
-  updateRestaurant(
-    @AuthUser() authUser: User,
+  @Mutation(() => UpdateRestaurantOutput)
+  async updateRestaurant(
+    @AuthUser() owner: User,
     @Args('updateRestaurantInput') updateRestaurantInput: UpdateRestaurantInput,
-  ) {
-    return true;
+  ): Promise<UpdateRestaurantOutput> {
+    return this.restaurantsService.update(owner, updateRestaurantInput);
   }
 
   @Mutation(() => Restaurant)

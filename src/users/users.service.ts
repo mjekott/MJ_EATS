@@ -46,13 +46,14 @@ export class UsersService {
         this.users.create({ email, password, role }),
       );
       //ccreate verfication code and save in database
+
       const verification = await this.verification.save(
-        this.verification.create(user),
+        this.verification.create({ user }),
       );
 
       this.mailService.sendVerificationEmail(user.email, verification.code);
 
-      return { ok: true };
+      return { ok: true, user };
     } catch (error) {
       return {
         ok: false,
