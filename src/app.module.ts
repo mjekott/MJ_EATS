@@ -18,6 +18,7 @@ import { Verification } from './users/entities/verification.entities';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { Category } from './restaurants/entities/category.entity';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -55,14 +56,15 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       synchronize: true,
       entities: [User, Verification, Category, Restaurant],
     }),
-    UsersModule,
     JwtModule.forRoot({ privateKey: process.env.JWT_SECRET }),
     MailModule.forRoot({
       apiKey: process.env.MAILGUN_API_KEY,
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
       domain: process.env.MAILGUN_DOMAIN_NAME,
     }),
+    UsersModule,
     RestaurantsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

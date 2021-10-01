@@ -64,3 +64,9 @@ $ npm run test:cov
 - category
 - address
 - coverImage
+
+### Restaurant Crud
+
+- Create Restaurant
+- Edit Restaurant
+- Delete Restaurant

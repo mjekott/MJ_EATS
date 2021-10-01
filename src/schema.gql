@@ -7,7 +7,8 @@ type Category {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
-  coverImage: String!
+  coverImage: String
+  slug: String!
   restaurants: [Restaurant!]!
 }
 
@@ -72,6 +73,11 @@ type VerifyEmailOutput {
   error: String
 }
 
+type CreateRestaurantOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   me: User!
   profile(userid: Float!): UserProfileOutput!
@@ -84,7 +90,7 @@ type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
   verifyEmail(input: VerifyEmailInput!): VerifyEmailOutput!
-  createRestaurant(createRestaurantInput: CreateRestaurantInput!): Restaurant!
+  createRestaurant(createRestaurantInput: CreateRestaurantInput!): CreateRestaurantOutput!
   updateRestaurant(updateRestaurantInput: UpdateRestaurantInput!): Restaurant!
   removeRestaurant(id: Int!): Restaurant!
 }
@@ -110,7 +116,8 @@ input RestaurantInputType {
 
 input CategoryInputType {
   name: String!
-  coverImage: String!
+  coverImage: String
+  slug: String!
   restaurants: [RestaurantInputType!]!
 }
 
@@ -138,12 +145,15 @@ input VerifyEmailInput {
 }
 
 input CreateRestaurantInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
+  address: String!
+  coverImage: String!
+  categoryName: String!
 }
 
 input UpdateRestaurantInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  name: String
+  address: String
+  coverImage: String
+  categoryName: String
 }

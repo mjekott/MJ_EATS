@@ -1,16 +1,26 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { RestaurantsService } from './restaurants.service';
 import { Restaurant } from './entities/restaurant.entity';
-import { CreateRestaurantInput } from './dto/create-restaurant.input';
+import {
+  CreateRestaurantInput,
+  CreateRestaurantOutput,
+} from './dto/create-restaurant.input';
 import { UpdateRestaurantInput } from './dto/update-restaurant.input';
+import { AuthUser } from '../auth/auth-user.decorator';
+import { User } from '../users/entities/user.entities';
+import { Role } from '../auth/role.decorator';
 
 @Resolver(() => Restaurant)
 export class RestaurantsResolver {
   constructor(private readonly restaurantsService: RestaurantsService) {}
 
-  @Mutation(() => Restaurant)
-  createRestaurant(@Args('createRestaurantInput') createRestaurantInput: CreateRestaurantInput) {
-    return this.restaurantsService.create(createRestaurantInput);
+  @Mutation(() => CreateRestaurantOutput)
+  @Role(['OWNER'])
+  createRestaurant(
+    @AuthUser() authUser: User,
+    @Args('createRestaurantInput') createRestaurantInput: CreateRestaurantInput,
+  ): Promise<CreateRestaurantOutput> {
+    return this.restaurantsService.create(authUser, createRestaurantInput);
   }
 
   @Query(() => [Restaurant], { name: 'restaurants' })
@@ -23,9 +33,13 @@ export class RestaurantsResolver {
     return this.restaurantsService.findOne(id);
   }
 
+  @Role(['OWNER'])
   @Mutation(() => Restaurant)
-  updateRestaurant(@Args('updateRestaurantInput') updateRestaurantInput: UpdateRestaurantInput) {
-    return this.restaurantsService.update(updateRestaurantInput.id, updateRestaurantInput);
+  updateRestaurant(
+    @AuthUser() authUser: User,
+    @Args('updateRestaurantInput') updateRestaurantInput: UpdateRestaurantInput,
+  ) {
+    return true;
   }
 
   @Mutation(() => Restaurant)
