@@ -15,7 +15,8 @@ import {
   min,
 } from 'class-validator';
 import { Core } from 'src/common/entities/core.entities';
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
+import { Restaurant } from '../../restaurants/entities/restaurant.entity';
 export enum UserRole {
   CLIENT,
   OWNER,
@@ -24,7 +25,7 @@ export enum UserRole {
 
 registerEnumType(UserRole, { name: 'UserRole' });
 
-@InputType({ isAbstract: true })
+@InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity('users')
 export class User extends Core {
@@ -48,6 +49,10 @@ export class User extends Core {
   @Field(() => Boolean)
   @IsBoolean()
   verified: boolean;
+
+  @Field(() => [Restaurant])
+  @OneToMany(() => Restaurant, (restaurant) => restaurant.owner)
+  restaurants: Restaurant[];
 
   @BeforeInsert()
   @BeforeUpdate()

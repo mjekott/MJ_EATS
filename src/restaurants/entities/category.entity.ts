@@ -4,7 +4,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { Core } from '../../common/entities/core.entities';
 import { Restaurant } from './restaurant.entity';
 
-@InputType({ isAbstract: true })
+@InputType('CategoryInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class Category extends Core {
