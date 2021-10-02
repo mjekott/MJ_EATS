@@ -31,7 +31,14 @@ import {
   CatgeoryOutput,
 } from './dto/category.inputs';
 import { query } from 'express';
-import { RestaurantInput, RestaurantOutput } from './dto/restaurant.inputs';
+import {
+  RestaurantInput,
+  RestaurantOutput,
+  RestaurantsInput,
+  RestaurantsOutput,
+  SearchRestaurantInput,
+  SearchRestaurantOutput,
+} from './dto/restaurant.inputs';
 
 @Resolver(() => Restaurant)
 export class RestaurantsResolver {
@@ -73,11 +80,27 @@ export class RestaurantsResolver {
     return this.restaurantsService.delete(owner, deleteRestaurantInput);
   }
 
-  @Query(() => RestaurantOutput)
+  @Query(() => RestaurantsOutput)
   async allrestaurant(
+    @Args('restaurantInput') restaurantInput: RestaurantsInput,
+  ): Promise<RestaurantsOutput> {
+    return this.restaurantsService.allRestaurants(restaurantInput);
+  }
+
+  @Query(() => RestaurantOutput)
+  async restaurant(
     @Args('restaurantInput') restaurantInput: RestaurantInput,
   ): Promise<RestaurantOutput> {
-    return this.restaurantsService.allRestaurants(restaurantInput);
+    return this.restaurantsService.findRestaurantById(restaurantInput);
+  }
+
+  @Query(() => SearchRestaurantOutput)
+  searchRestaurant(
+    @Args('searchRestaurantInput') searchRestaurantInput: SearchRestaurantInput,
+  ): Promise<SearchRestaurantOutput> {
+    return this.restaurantsService.searchRestaurantByName(
+      searchRestaurantInput,
+    );
   }
 }
 

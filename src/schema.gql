@@ -103,26 +103,50 @@ type AllCategoriesOutput {
   categories: [Category!]
 }
 
-type RestaurantOutput {
+type RestaurantsOutput {
   ok: Boolean!
   error: String
   totalPages: Float
   results: [Restaurant!]
 }
 
+type RestaurantOutput {
+  ok: Boolean!
+  error: String
+  restaurant: Restaurant
+}
+
+type SearchRestaurantOutput {
+  ok: Boolean!
+  error: String
+  totalPages: Float
+  restaurants: [Restaurant!]
+}
+
 type Query {
   me: User!
   profile(userid: Float!): UserProfileOutput!
   restaurants: [Restaurant!]!
-  restaurant(id: Int!): Restaurant!
-  allrestaurant(restaurantInput: RestaurantInput!): RestaurantOutput!
+  restaurant(restaurantInput: RestaurantInput!): RestaurantOutput!
+  allrestaurant(restaurantInput: RestaurantsInput!): RestaurantsOutput!
+  searchRestaurant(searchRestaurantInput: SearchRestaurantInput!): SearchRestaurantOutput!
   allCategories: AllCategoriesOutput!
   category(categoryInput: CategoryInput!): CatgeoryOutput!
 }
 
 input RestaurantInput {
+  restaurantId: Float!
+}
+
+input RestaurantsInput {
   page: Float = 1
   limit: Float = 25
+}
+
+input SearchRestaurantInput {
+  page: Float = 1
+  limit: Float = 25
+  query: String!
 }
 
 input CategoryInput {
