@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Raw, Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entities';
 import {
   AllCategoriesOutput,
@@ -15,6 +15,7 @@ import {
   DeleteRestaurantInput,
   DeleteRestaurantOuput,
 } from './dto/delete-restaurant.input';
+import { CreateDishInput, CreateDishOutput } from './dto/dishes.dtos';
 import {
   RestaurantInput,
   RestaurantOutput,
@@ -28,6 +29,7 @@ import {
   UpdateRestaurantOutput,
 } from './dto/update-restaurant.input';
 import { Category } from './entities/category.entity';
+import { Dish } from './entities/dish.entity';
 import { Restaurant } from './entities/restaurant.entity';
 import { CategoryRepository } from './repositories/category.repository';
 
@@ -36,6 +38,7 @@ export class RestaurantsService {
   constructor(
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
+    @InjectRepository(Dish) private readonly dishes: Repository<Dish>,
     private readonly categories: CategoryRepository,
   ) {}
 
@@ -177,7 +180,9 @@ export class RestaurantsService {
     restaurantId,
   }: RestaurantInput): Promise<RestaurantOutput> {
     try {
-      const restaurant = await this.restaurants.findOne(restaurantId);
+      const restaurant = await this.restaurants.findOne(restaurantId, {
+        relations: ['menu'],
+      });
       if (!restaurant) {
         return {
           ok: false,
@@ -275,6 +280,40 @@ export class RestaurantsService {
       return {
         ok: false,
         error: 'Cound not load category ',
+      };
+    }
+  }
+
+  async createDish(
+    owner: User,
+    createDishInput: CreateDishInput,
+  ): Promise<CreateDishOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne(
+        createDishInput.restaurantId,
+      );
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'Restaurant not found',
+        };
+      }
+      if (owner.id !== restaurant.ownerId) {
+        return {
+          ok: false,
+          error: 'You can not perform this operation',
+        };
+      }
+      const dish = await this.dishes.save(
+        this.dishes.create({ ...createDishInput, restaurant }),
+      );
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not create Dish',
       };
     }
   }

@@ -30,7 +30,7 @@ import {
   CategoryInput,
   CatgeoryOutput,
 } from './dto/category.inputs';
-import { query } from 'express';
+
 import {
   RestaurantInput,
   RestaurantOutput,
@@ -39,6 +39,10 @@ import {
   SearchRestaurantInput,
   SearchRestaurantOutput,
 } from './dto/restaurant.inputs';
+import { Dish } from './entities/dish.entity';
+import { CreateDishInput, CreateDishOutput } from './dto/dishes.dtos';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Resolver(() => Restaurant)
 export class RestaurantsResolver {
@@ -123,5 +127,19 @@ export class CategoryResolver {
     @Args('categoryInput') categoryInput: CategoryInput,
   ): Promise<CatgeoryOutput> {
     return this.restaurantService.findCategoryBySlug(categoryInput);
+  }
+}
+
+@Resolver(() => Dish)
+export class DishResolver {
+  constructor(private readonly restaurantSerive: RestaurantsService) {}
+
+  @Role(['OWNER'])
+  @Mutation(() => CreateDishOutput)
+  createDish(
+    @AuthUser() owner: User,
+    @Args('createDishInput') createDishInput: CreateDishInput,
+  ): Promise<CreateDishOutput> {
+    return this.restaurantSerive.createDish(owner, createDishInput);
   }
 }
