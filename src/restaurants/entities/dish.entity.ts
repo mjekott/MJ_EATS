@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 import { Core } from '../../common/entities/core.entities';
+import { Order } from '../../orders/entity/orders';
 import { Restaurant } from './restaurant.entity';
 
 @InputType('DishChoiceInputType', { isAbstract: true })

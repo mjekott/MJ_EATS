@@ -16,6 +16,7 @@ import {
 } from 'class-validator';
 import { Core } from 'src/common/entities/core.entities';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
+import { Order } from '../../orders/entity/orders';
 import { Restaurant } from '../../restaurants/entities/restaurant.entity';
 export enum UserRole {
   CLIENT = 'CLIENT',
@@ -53,6 +54,14 @@ export class User extends Core {
   @Field(() => [Restaurant])
   @OneToMany(() => Restaurant, (restaurant) => restaurant.owner)
   restaurants: Restaurant[];
+
+  @Field(() => [Order])
+  @OneToMany(() => Order, (order) => order.customer)
+  orders: Order[];
+
+  @Field(() => [Order])
+  @OneToMany(() => Order, (order) => order.driver)
+  rides: Order[];
 
   @BeforeInsert()
   @BeforeUpdate()

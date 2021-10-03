@@ -18,6 +18,19 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Restaurant {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  address: String!
+  coverImage: String!
+  category: Category!
+  menu: [Dish!]!
+  owner: User!
+  orders: [Order!]!
+}
+
 type DishOption {
   name: String!
   choices: [String!]
@@ -36,16 +49,23 @@ type Dish {
   options: [DishOption!]
 }
 
-type Restaurant {
+type Order {
   id: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
-  address: String!
-  coverImage: String!
-  category: Category!
-  menu: [Dish!]!
-  owner: User!
+  customer: User
+  driver: User
+  restaurant: Restaurant
+  dishes: [Dish!]!
+  total: Float!
+  status: OrderStatus!
+}
+
+enum OrderStatus {
+  PENDING
+  COOKING
+  PICKEDUP
+  DELIVERD
 }
 
 type User {
@@ -57,6 +77,8 @@ type User {
   role: UserRole!
   verified: Boolean!
   restaurants: [Restaurant!]!
+  orders: [Order!]!
+  rides: [Order!]!
 }
 
 enum UserRole {
@@ -201,6 +223,8 @@ input EditProfileInput {
   role: UserRole
   verified: Boolean
   restaurants: [RestaurantInputType!]
+  orders: [OrderInputType!]
+  rides: [OrderInputType!]
 }
 
 input RestaurantInputType {
@@ -210,6 +234,7 @@ input RestaurantInputType {
   category: CategoryInputType!
   menu: [DishInputType!]!
   owner: UserInputType!
+  orders: [OrderInputType!]!
 }
 
 input CategoryInputType {
@@ -240,6 +265,17 @@ input UserInputType {
   role: UserRole!
   verified: Boolean!
   restaurants: [RestaurantInputType!]!
+  orders: [OrderInputType!]!
+  rides: [OrderInputType!]!
+}
+
+input OrderInputType {
+  customer: UserInputType
+  driver: UserInputType
+  restaurant: RestaurantInputType
+  dishes: [DishInputType!]!
+  total: Float!
+  status: OrderStatus!
 }
 
 input CreateAccountInput {
