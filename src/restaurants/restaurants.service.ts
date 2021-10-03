@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { boolean } from 'joi';
 import { Raw, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entities';
 import {
@@ -15,7 +16,14 @@ import {
   DeleteRestaurantInput,
   DeleteRestaurantOuput,
 } from './dto/delete-restaurant.input';
-import { CreateDishInput, CreateDishOutput } from './dto/dishes.dtos';
+import {
+  CreateDishInput,
+  CreateDishOutput,
+  DeleteDishInput,
+  DeleteDishOuput,
+  UpdateDishInput,
+  UpdateDishOuput,
+} from './dto/dishes.dtos';
 import {
   RestaurantInput,
   RestaurantOutput,
@@ -314,6 +322,73 @@ export class RestaurantsService {
       return {
         ok: false,
         error: 'Could not create Dish',
+      };
+    }
+  }
+
+  async updateDish(
+    owner: User,
+    updateDishInput: UpdateDishInput,
+  ): Promise<UpdateDishOuput> {
+    try {
+      const dish = await this.dishes.findOne(updateDishInput.dishId, {
+        relations: ['restaurant'],
+      });
+      if (!dish) {
+        return {
+          ok: false,
+          error: 'Dish not found',
+        };
+      }
+
+      await this.dishes.save({
+        id: updateDishInput.dishId,
+        ...updateDishInput,
+      });
+    } catch {
+      return {
+        ok: false,
+        error: 'Cound not Update Dish',
+      };
+    }
+  }
+
+  async deleteDish(
+    owner: User,
+    { dishId }: DeleteDishInput,
+  ): Promise<DeleteDishOuput> {
+    try {
+      const dish = await this.dishes.findOne(dishId, {
+        relations: ['restaurant'],
+      });
+      if (!dish) {
+        return {
+          ok: false,
+          error: 'Dish not found',
+        };
+      }
+      this.allowedToPerformTask(dish.restaurant.ownerId, owner.id);
+
+      await this.dishes.delete(dishId);
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Cound not Delete Dish',
+      };
+    }
+  }
+
+  allowedToPerformTask(
+    resourceOwnerId: number,
+    ownerId: number,
+  ): { ok: boolean; error: string } {
+    if (resourceOwnerId !== ownerId) {
+      return {
+        ok: false,
+        error: 'Not Authorized to Perform Operation',
       };
     }
   }

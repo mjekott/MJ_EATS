@@ -188,6 +188,8 @@ type Mutation {
   updateRestaurant(updateRestaurantInput: UpdateRestaurantInput!): UpdateRestaurantOutput!
   deleteRestaurant(deleteRestaurantInput: DeleteRestaurantInput!): DeleteRestaurantOuput!
   createDish(createDishInput: CreateDishInput!): CreateDishOutput!
+  updateDish(updateDishInput: UpdateDishInput!): CreateDishOutput!
+  deleteDish(deleteDishInput: DeleteDishInput!): CreateDishOutput!
 }
 
 input EditProfileInput {
@@ -280,4 +282,16 @@ input CreateDishInput {
   description: String!
   options: [DishOptionInputType!]
   restaurantId: Float!
+}
+
+input UpdateDishInput {
+  name: String
+  price: Float
+  description: String
+  options: [DishOptionInputType!]
+  dishId: Float!
+}
+
+input DeleteDishInput {
+  dishId: Float!
 }

@@ -40,7 +40,14 @@ import {
   SearchRestaurantOutput,
 } from './dto/restaurant.inputs';
 import { Dish } from './entities/dish.entity';
-import { CreateDishInput, CreateDishOutput } from './dto/dishes.dtos';
+import {
+  CreateDishInput,
+  CreateDishOutput,
+  DeleteDishInput,
+  DeleteDishOuput,
+  UpdateDishInput,
+  UpdateDishOuput,
+} from './dto/dishes.dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -141,5 +148,23 @@ export class DishResolver {
     @Args('createDishInput') createDishInput: CreateDishInput,
   ): Promise<CreateDishOutput> {
     return this.restaurantSerive.createDish(owner, createDishInput);
+  }
+
+  @Role(['OWNER'])
+  @Mutation(() => CreateDishOutput)
+  updateDish(
+    @AuthUser() owner: User,
+    @Args('updateDishInput') updateDishInput: UpdateDishInput,
+  ): Promise<UpdateDishOuput> {
+    return this.restaurantSerive.updateDish(owner, updateDishInput);
+  }
+
+  @Role(['OWNER'])
+  @Mutation(() => CreateDishOutput)
+  deleteDish(
+    @AuthUser() owner: User,
+    @Args('deleteDishInput') deleteDishInput: DeleteDishInput,
+  ): Promise<DeleteDishOuput> {
+    return this.restaurantSerive.deleteDish(owner, deleteDishInput);
   }
 }
