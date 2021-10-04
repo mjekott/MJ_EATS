@@ -18,22 +18,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Restaurant {
-  id: Float!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+type DishChoice {
   name: String!
-  address: String!
-  coverImage: String!
-  category: Category!
-  menu: [Dish!]!
-  owner: User!
-  orders: [Order!]!
+  extra: Float
 }
 
 type DishOption {
   name: String!
-  choices: [String!]
+  choices: [DishChoice!]
   extra: Float
 }
 
@@ -49,6 +41,31 @@ type Dish {
   options: [DishOption!]
 }
 
+type Restaurant {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  address: String!
+  coverImage: String!
+  category: Category!
+  menu: [Dish!]!
+  owner: User!
+  orders: [Order!]!
+}
+
+type OrderItemOption {
+  name: String!
+  choice: String
+}
+
+type OrderItem {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  options: [OrderItemOption!]
+}
+
 type Order {
   id: Float!
   createdAt: DateTime!
@@ -56,8 +73,8 @@ type Order {
   customer: User
   driver: User
   restaurant: Restaurant
-  dishes: [Dish!]!
-  total: Float!
+  items: [OrderItem!]!
+  total: Float
   status: OrderStatus!
 }
 
@@ -169,6 +186,11 @@ type CreateDishOutput {
   error: String
 }
 
+type CreateOrderOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   me: User!
   profile(userid: Float!): UserProfileOutput!
@@ -212,6 +234,7 @@ type Mutation {
   createDish(createDishInput: CreateDishInput!): CreateDishOutput!
   updateDish(updateDishInput: UpdateDishInput!): CreateDishOutput!
   deleteDish(deleteDishInput: DeleteDishInput!): CreateDishOutput!
+  createOrder(createOrderInput: CreateOrderInput!): CreateOrderOutput!
 }
 
 input EditProfileInput {
@@ -255,7 +278,12 @@ input DishInputType {
 
 input DishOptionInputType {
   name: String!
-  choices: [String!]
+  choices: [DishChoiceInputType!]
+  extra: Float
+}
+
+input DishChoiceInputType {
+  name: String!
   extra: Float
 }
 
@@ -273,9 +301,18 @@ input OrderInputType {
   customer: UserInputType
   driver: UserInputType
   restaurant: RestaurantInputType
-  dishes: [DishInputType!]!
-  total: Float!
+  items: [OrderItemInputType!]!
+  total: Float
   status: OrderStatus!
+}
+
+input OrderItemInputType {
+  options: [OrderItemOptionInputType!]
+}
+
+input OrderItemOptionInputType {
+  name: String!
+  choice: String
 }
 
 input CreateAccountInput {
@@ -330,4 +367,14 @@ input UpdateDishInput {
 
 input DeleteDishInput {
   dishId: Float!
+}
+
+input CreateOrderInput {
+  restaurantId: Float!
+  items: [CreateOrderItemInput!]!
+}
+
+input CreateOrderItemInput {
+  dishId: Int!
+  options: [OrderItemOptionInputType!]
 }

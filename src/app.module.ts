@@ -22,6 +22,7 @@ import { AuthModule } from './auth/auth.module';
 import { Dish } from './restaurants/entities/dish.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entity/orders';
+import { OrderItem } from './orders/entity/order-item';
 
 @Module({
   imports: [
@@ -57,7 +58,15 @@ import { Order } from './orders/entity/orders';
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       synchronize: true,
-      entities: [User, Verification, Category, Restaurant, Dish, Order],
+      entities: [
+        User,
+        Verification,
+        Category,
+        Restaurant,
+        Dish,
+        Order,
+        OrderItem,
+      ],
     }),
     JwtModule.forRoot({ privateKey: process.env.JWT_SECRET }),
     MailModule.forRoot({
