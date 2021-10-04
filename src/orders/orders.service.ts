@@ -5,6 +5,7 @@ import { Dish } from '../restaurants/entities/dish.entity';
 import { Restaurant } from '../restaurants/entities/restaurant.entity';
 import { User, UserRole } from '../users/entities/user.entities';
 import { CreateOrderInput, CreateOrderOutput } from './dtos/create-order.dto';
+import { GetOrderInput, GetOrderOuput } from './dtos/get-order.dto';
 import { GetOrdersInputType, GetOrdersOutput } from './dtos/get-orders.dtos';
 import { OrderItem } from './entity/order-item';
 import { Order } from './entity/orders';
@@ -100,12 +101,14 @@ export class OrdersService {
         orders = await this.orders.find({
           where: {
             customer: user,
+            ...(status && { status }),
           },
         });
       } else if (user.role === UserRole.DELIVERY) {
         orders = await this.orders.find({
           where: {
             driver: user,
+            ...(status && { status }),
           },
         });
       } else if (user.role === UserRole.OWNER) {
@@ -118,6 +121,10 @@ export class OrdersService {
         orders = (await restaurants)
           .map((restaurant) => restaurant.orders)
           .flat(1);
+
+        if (status) {
+          orders = orders.filter((order) => order.status === status);
+        }
       }
 
       return {
@@ -128,6 +135,48 @@ export class OrdersService {
       return {
         ok: false,
         error: 'Could not get orders',
+      };
+    }
+  }
+
+  async getOrder(user: User, { id }: GetOrderInput): Promise<GetOrderOuput> {
+    try {
+      const order = await this.orders.findOne(id);
+      if (!order) {
+        return {
+          ok: false,
+          error: 'Order not found',
+        };
+      }
+      let allow = true;
+      if (user.role === UserRole.CLIENT && order.customerId !== user.id) {
+        allow = false;
+      }
+      if (user.role === UserRole.DELIVERY && order.driverId !== user.id) {
+        allow = false;
+      }
+
+      if (
+        user.role === UserRole.OWNER &&
+        order.restaurant.ownerId !== user.id
+      ) {
+        allow = false;
+      }
+      if (!allow) {
+        return {
+          ok: false,
+          error: "You can't see that",
+        };
+      }
+
+      return {
+        ok: true,
+        order,
+      };
+    } catch {
+      return {
+        ok: true,
+        error: 'Couuld not get Order',
       };
     }
   }
