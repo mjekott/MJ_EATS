@@ -15,7 +15,6 @@ import {
   RelationId,
 } from 'typeorm';
 import { Core } from '../../common/entities/core.entities';
-import { Dish } from '../../restaurants/entities/dish.entity';
 import { Restaurant } from '../../restaurants/entities/restaurant.entity';
 import { User } from '../../users/entities/user.entities';
 import { OrderItem } from './order-item';
@@ -23,6 +22,7 @@ import { OrderItem } from './order-item';
 export enum OrderStatus {
   PENDING = 'PENDING',
   COOKING = 'COOKING',
+  COOKED = 'COOKED',
   PICKEDUP = 'PICKEDUP',
   DELIVERD = 'DELIVERED',
 }
