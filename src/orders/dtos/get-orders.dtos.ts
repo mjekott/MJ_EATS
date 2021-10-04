@@ -5,11 +5,11 @@ import { Order, OrderStatus } from '../entity/orders';
 @InputType()
 export class GetOrdersInputType {
   @Field(() => OrderStatus, { nullable: true })
-  status: OrderStatus;
+  status?: OrderStatus;
 }
 
 @ObjectType()
 export class GetOrdersOutput extends CoreOutput {
-  @Field(() => [Order])
-  orders: Order[];
+  @Field(() => [Order], { nullable: true })
+  orders?: Order[];
 }

@@ -191,6 +191,12 @@ type CreateOrderOutput {
   error: String
 }
 
+type GetOrdersOutput {
+  ok: Boolean!
+  error: String
+  orders: [Order!]
+}
+
 type Query {
   me: User!
   profile(userid: Float!): UserProfileOutput!
@@ -235,6 +241,7 @@ type Mutation {
   updateDish(updateDishInput: UpdateDishInput!): CreateDishOutput!
   deleteDish(deleteDishInput: DeleteDishInput!): CreateDishOutput!
   createOrder(createOrderInput: CreateOrderInput!): CreateOrderOutput!
+  getOrders(getOrdersInput: GetOrdersInputType!): GetOrdersOutput!
 }
 
 input EditProfileInput {
@@ -377,4 +384,8 @@ input CreateOrderInput {
 input CreateOrderItemInput {
   dishId: Int!
   options: [OrderItemOptionInputType!]
+}
+
+input GetOrdersInputType {
+  status: OrderStatus
 }
