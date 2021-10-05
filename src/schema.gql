@@ -81,6 +81,7 @@ type Order {
 enum OrderStatus {
   PENDING
   COOKING
+  COOKED
   PICKEDUP
   DELIVERD
 }
@@ -191,6 +192,12 @@ type CreateOrderOutput {
   error: String
 }
 
+type GetOrderOuput {
+  ok: Boolean!
+  error: String
+  order: Order
+}
+
 type GetOrdersOutput {
   ok: Boolean!
   error: String
@@ -206,6 +213,7 @@ type Query {
   searchRestaurant(searchRestaurantInput: SearchRestaurantInput!): SearchRestaurantOutput!
   allCategories: AllCategoriesOutput!
   category(categoryInput: CategoryInput!): CatgeoryOutput!
+  getOrder(getOrderInput: GetOrderInput!): GetOrderOuput!
 }
 
 input RestaurantInput {
@@ -227,6 +235,10 @@ input CategoryInput {
   page: Float = 1
   limit: Float = 25
   slug: String!
+}
+
+input GetOrderInput {
+  id: Float!
 }
 
 type Mutation {
@@ -388,4 +400,8 @@ input CreateOrderItemInput {
 
 input GetOrdersInputType {
   status: OrderStatus
+}
+
+type Subscription {
+  orderSubscription: String!
 }

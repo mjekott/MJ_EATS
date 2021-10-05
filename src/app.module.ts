@@ -45,8 +45,19 @@ import { OrderItem } from './orders/entity/order-item';
       }),
     }),
     GraphQLModule.forRoot({
+      installSubscriptionHandlers: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      context: ({ req }) => ({ user: req['user'] }),
+      context: ({ req, connection }) => {
+        const TOKEN_KEY = 'Authorization';
+        return {
+          token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY],
+        };
+        /*   if (req) {
+          return { user: req['user'] };
+        } else {
+          console.log(connection);
+        } */
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -82,11 +93,11 @@ import { OrderItem } from './orders/entity/order-item';
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+export class AppModule {
+  /*   configure(consumer: MiddlewareConsumer) {
     consumer.apply(JwtMiddleware).forRoutes({
       path: '*',
       method: RequestMethod.ALL,
     });
-  }
+  } */
 }
