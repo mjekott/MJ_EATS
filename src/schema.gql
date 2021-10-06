@@ -52,6 +52,8 @@ type Restaurant {
   menu: [Dish!]!
   owner: User!
   orders: [Order!]!
+  isPromoted: Boolean!
+  promotedUntil: DateTime
 }
 
 type OrderItemOption {
@@ -86,6 +88,16 @@ enum OrderStatus {
   DELIVERD
 }
 
+type Payment {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  transactionId: Int!
+  user: User
+  restaurant: Restaurant!
+  restaurantId: Int!
+}
+
 type User {
   id: Float!
   createdAt: DateTime!
@@ -96,6 +108,7 @@ type User {
   verified: Boolean!
   restaurants: [Restaurant!]!
   orders: [Order!]!
+  payments: [Payment!]!
   rides: [Order!]!
 }
 
@@ -204,6 +217,22 @@ type GetOrdersOutput {
   orders: [Order!]
 }
 
+type TakeOrderOutput {
+  ok: Boolean!
+  error: String
+}
+
+type CreatePaymentOuput {
+  ok: Boolean!
+  error: String
+}
+
+type GetPaymentsOutput {
+  ok: Boolean!
+  error: String
+  payments: [Payment!]
+}
+
 type Query {
   me: User!
   profile(userid: Float!): UserProfileOutput!
@@ -214,6 +243,7 @@ type Query {
   allCategories: AllCategoriesOutput!
   category(categoryInput: CategoryInput!): CatgeoryOutput!
   getOrder(getOrderInput: GetOrderInput!): GetOrderOuput!
+  getPayments: GetPaymentsOutput!
 }
 
 input RestaurantInput {
@@ -254,6 +284,8 @@ type Mutation {
   deleteDish(deleteDishInput: DeleteDishInput!): CreateDishOutput!
   createOrder(createOrderInput: CreateOrderInput!): CreateOrderOutput!
   getOrders(getOrdersInput: GetOrdersInputType!): GetOrdersOutput!
+  takeOrder(takeOrderInput: TakeOrderInput!): TakeOrderOutput!
+  createPayment(input: CreatePaymentInput!): CreatePaymentOuput!
 }
 
 input EditProfileInput {
@@ -266,6 +298,7 @@ input EditProfileInput {
   verified: Boolean
   restaurants: [RestaurantInputType!]
   orders: [OrderInputType!]
+  payments: [PaymentInputType!]
   rides: [OrderInputType!]
 }
 
@@ -277,6 +310,8 @@ input RestaurantInputType {
   menu: [DishInputType!]!
   owner: UserInputType!
   orders: [OrderInputType!]!
+  isPromoted: Boolean!
+  promotedUntil: DateTime
 }
 
 input CategoryInputType {
@@ -313,6 +348,7 @@ input UserInputType {
   verified: Boolean!
   restaurants: [RestaurantInputType!]!
   orders: [OrderInputType!]!
+  payments: [PaymentInputType!]!
   rides: [OrderInputType!]!
 }
 
@@ -332,6 +368,13 @@ input OrderItemInputType {
 input OrderItemOptionInputType {
   name: String!
   choice: String
+}
+
+input PaymentInputType {
+  transactionId: Int!
+  user: UserInputType
+  restaurant: RestaurantInputType!
+  restaurantId: Int!
 }
 
 input CreateAccountInput {
@@ -402,6 +445,20 @@ input GetOrdersInputType {
   status: OrderStatus
 }
 
+input TakeOrderInput {
+  id: Float!
+}
+
+input CreatePaymentInput {
+  transactionId: Int!
+  restaurantId: Int!
+}
+
 type Subscription {
   pendingOrders: Order!
+  orderUpdate(orderInput: OrderInput!): Order!
+}
+
+input OrderInput {
+  id: Float!
 }

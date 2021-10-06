@@ -52,9 +52,12 @@ export class OrdersResolver {
     return this.ordersService.getOrder(user, getOrderInput);
   }
 
-  @Mutation(()=>TakeOrderOutput)
-  async takeOrder(@AuthUser() driver:User,@Args('takeOrderInput',takeOrderInput:TakeOrderInput)):Promise<TakeOrderOutput>{
-    return this.ordersService.takeOrder(driver, takeOrderInput)
+  @Mutation(() => TakeOrderOutput)
+  async takeOrder(
+    @AuthUser() driver: User,
+    @Args('takeOrderInput') takeOrderInput: TakeOrderInput,
+  ): Promise<TakeOrderOutput> {
+    return this.ordersService.takeOrder(driver, takeOrderInput);
   }
 
   @Subscription(() => Order, {
@@ -92,6 +95,4 @@ export class OrdersResolver {
   orderUpdate(@Args('orderInput') orderInput: OrderInput) {
     return this.pubsub.asyncIterator(NEW_ORDER_UPDATE);
   }
-
-  
 }

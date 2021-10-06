@@ -25,9 +25,12 @@ import { Order } from './orders/entity/orders';
 import { OrderItem } from './orders/entity/order-item';
 import { CommonModule } from './common/common.module';
 import { PaymentsModule } from './payments/payments.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { Payment } from './payments/entities/payment.entity';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath:
@@ -79,6 +82,7 @@ import { PaymentsModule } from './payments/payments.module';
         Dish,
         Order,
         OrderItem,
+        Payment,
       ],
     }),
     JwtModule.forRoot({ privateKey: process.env.JWT_SECRET }),
