@@ -403,5 +403,5 @@ input GetOrdersInputType {
 }
 
 type Subscription {
-  orderSubscription: String!
+  pendingOrders: Order!
 }
