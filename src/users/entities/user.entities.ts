@@ -17,6 +17,7 @@ import {
 import { Core } from 'src/common/entities/core.entities';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { Order } from '../../orders/entity/orders';
+import { Payment } from '../../payments/entities/payment.entity';
 import { Restaurant } from '../../restaurants/entities/restaurant.entity';
 export enum UserRole {
   CLIENT = 'CLIENT',
@@ -58,6 +59,10 @@ export class User extends Core {
   @Field(() => [Order])
   @OneToMany(() => Order, (order) => order.customer)
   orders: Order[];
+
+  @Field(() => [Payment])
+  @OneToMany(() => Payment, (payment) => payment.user)
+  payments: Payment[];
 
   @Field(() => [Order])
   @OneToMany(() => Order, (order) => order.driver)

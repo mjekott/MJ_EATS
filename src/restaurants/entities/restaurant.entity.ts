@@ -3,6 +3,7 @@ import { IsString, Length } from 'class-validator';
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Core } from '../../common/entities/core.entities';
 import { Order } from '../../orders/entity/orders';
+import { Payment } from '../../payments/entities/payment.entity';
 import { User } from '../../users/entities/user.entities';
 import { Category } from './category.entity';
 import { Dish } from './dish.entity';
