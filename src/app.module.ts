@@ -78,7 +78,8 @@ import { Payment } from './payments/entities/payment.entity';
           }),
 
       logging:
-        process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
+        process.env.NODE_ENV !== 'production' &&
+        process.env.NODE_ENV !== 'test',
       synchronize: true,
       entities: [
         User,
