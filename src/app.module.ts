@@ -53,7 +53,8 @@ import { Payment } from './payments/entities/payment.entity';
       installSubscriptionHandlers: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       context: ({ req, connection }) => {
-        const TOKEN_KEY = 'Authorization';
+        const TOKEN_KEY = 'authorization';
+
         return {
           token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY],
         };
