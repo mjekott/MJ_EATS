@@ -78,7 +78,9 @@ import { Payment } from './payments/entities/payment.entity';
             database: process.env.DB_DATABASE,
           }),
 
-      ssl: true,
+      extra: {
+        ssl: true,
+      },
       logging:
         process.env.NODE_ENV !== 'production' &&
         process.env.NODE_ENV !== 'test',
