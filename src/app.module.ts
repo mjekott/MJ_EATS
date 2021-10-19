@@ -79,7 +79,9 @@ import { Payment } from './payments/entities/payment.entity';
           }),
 
       extra: {
-        ssl: true,
+        ssl: {
+          rejectUnauthorized: false,
+        },
       },
       logging:
         process.env.NODE_ENV !== 'production' &&
